@@ -49,10 +49,10 @@ async function main() {
   await tx.wait();
   console.log(`Transaction completed. Hash: ${tx.hash}`);
   // print updated Voter delegate
-//   const voter = await ballotContract.voters(signer.address);
-//   const newDelegate = voter.delegate.toString();
-//   console.log(`Address ${signer.address} is now delegating to ${newDelegate}`);
-//   console.log("--------------------------------");
+  const voter = await ballotContract.voters(signer.address);
+  const newDelegate = voter.delegate.toString();
+  console.log(`Address ${signer.address} is now delegating to ${newDelegate}`);
+  console.log("--------------------------------");
 }
 
 main().catch((error) => {
