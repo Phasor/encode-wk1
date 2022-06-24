@@ -26,7 +26,7 @@ async function main() {
   // const provider = ethers.providers.getDefaultProvider("goerli");
 
   // or specify a JSON RPC provider like this (this is faster):
-  const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_URL);
+  const provider = new ethers.providers.JsonRpcProvider(process.env.ROPSTEN_URL);
 
   const signer = wallet.connect(provider);
   const balanceBN = await signer.getBalance();

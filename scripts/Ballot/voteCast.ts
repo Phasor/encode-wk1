@@ -4,22 +4,20 @@ import * as ballotJson from "../../artifacts/contracts/Ballot.sol/Ballot.json";
 // eslint-disable-next-line node/no-missing-import
 import { Ballot } from "../../typechain";
 
-// 0xA02102E1519E1B03467bbfE0698A4275Ce6A904E is the deployed contract address on Ropsten
-
 // This key is already public on Herong's Tutorial Examples - v1.03, by Dr. Herong Yang
 // Do never expose your keys like this
 const EXPOSED_KEY =
   "8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f";
 
 async function main() {
-  // create wallet
+  // create a wallet with private keys 
   const wallet =
     process.env.MNEMONIC && process.env.MNEMONIC.length > 0
       ? ethers.Wallet.fromMnemonic(process.env.MNEMONIC)
       : new ethers.Wallet(process.env.PRIVATE_KEY ?? EXPOSED_KEY);
   console.log(`Using address ${wallet.address}`);
   // create provider
-  // const provider = ethers.providers.getDefaultProvider("ropsten");
+  // const provider = ethers.providers.getDefaultProvider("goerli");
   const provider = new ethers.providers.JsonRpcProvider(process.env.ROPSTEN_URL);
   const signer = wallet.connect(provider);
   const balanceBN = await signer.getBalance();
@@ -30,6 +28,8 @@ async function main() {
   }
   if (process.argv.length < 3) throw new Error("Ballot address missing");
   const ballotAddress = process.argv[2];
+  if (process.argv.length < 4) throw new Error("Proposal to vote for index missing");
+  const proposalVotingForIndex = process.argv[3];
 
   // create contract instance
   console.log(
@@ -41,27 +41,24 @@ async function main() {
     signer
   ) as Ballot;
 
-  console.log("The proposals are:");
+  const votingForProposalObj = await ballotContract.proposals(proposalVotingForIndex);
+  const votingForNameString = await ethers.utils.parseBytes32String(votingForProposalObj.name);
+  console.log(
+    `Voting for proposal ${proposalVotingForIndex} - ${votingForNameString}`
+  );
 
-  // loop through Proposal array and print the members as strings:
-  try {
-    let i: number = 0;
-    let name: string;
-    let voteCount: string;
-    let proposal;
-    while (true) {
-      proposal = await ballotContract.proposals(i);
-      name = ethers.utils.parseBytes32String(proposal.name);
-      voteCount = proposal.voteCount.toString();
-      console.log(`Name: ${name}, vote count: ${voteCount}`);
-      i++;
-    }
-  } catch (error) {
-    console.log("End of proposals array reached...");
-    console.log("------------------------------------------");
-  }
+  // cast vote
+  const tx = await ballotContract.vote(proposalVotingForIndex);
+  console.log("Awaiting confirmations");
+  await tx.wait();
+  console.log(`Transaction completed. Hash: ${tx.hash}`);
+  // print updated Proposal votes
+  const updatedProposal = await ballotContract.proposals(proposalVotingForIndex);
+  const updatedVotes = await updatedProposal.voteCount.toString();
+  console.log(`Proposal updated to: ${votingForNameString} - ${updatedVotes}`);
 }
 
 main().catch((error) => {
-  console.log(error);
+  console.error(error);
+  process.exitCode = 1;
 });
