@@ -22,8 +22,8 @@ async function main() {
       : new ethers.Wallet(process.env.PRIVATE_KEY ?? EXPOSED_KEY);
   console.log(`Using address ${wallet.address}`);
 
-  //could use the default provider like this:
-  //const provider = ethers.providers.getDefaultProvider("goerli");
+  // could use the default provider like this:
+  // const provider = ethers.providers.getDefaultProvider("goerli");
 
   // or specify a JSON RPC provider like this (this is faster):
   const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_URL);

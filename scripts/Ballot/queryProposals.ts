@@ -1,10 +1,10 @@
-import { BigNumber, Contract, ethers } from "ethers";
+import { Contract, ethers } from "ethers";
 import "dotenv/config";
 import * as ballotJson from "../../artifacts/contracts/Ballot.sol/Ballot.json";
 // eslint-disable-next-line node/no-missing-import
 import { Ballot } from "../../typechain";
 
-//0x2033c031eC73EbD080ecD0bD5bAB0122aF263B93 is the deployed contract address on Goerli
+// 0x2033c031eC73EbD080ecD0bD5bAB0122aF263B93 is the deployed contract address on Goerli
 
 // This key is already public on Herong's Tutorial Examples - v1.03, by Dr. Herong Yang
 // Do never expose your keys like this
@@ -18,7 +18,7 @@ async function main() {
       : new ethers.Wallet(process.env.PRIVATE_KEY ?? EXPOSED_KEY);
   console.log(`Using address ${wallet.address}`);
 
-  //const provider = ethers.providers.getDefaultProvider("ropsten");
+  // const provider = ethers.providers.getDefaultProvider("ropsten");
   const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_URL);
   const signer = wallet.connect(provider);
   const balanceBN = await signer.getBalance();
@@ -54,14 +54,9 @@ async function main() {
       i++;
     }
   } catch (error) {
-    console.log("End of proposals array reached...")
-    console.log("------------------------------------------")
+    console.log("End of proposals array reached...");
+    console.log("------------------------------------------");
   }
-  // const firstProposal: any = await ballotContract.proposals(5);
-  // const firstName: string = ethers.utils.parseBytes32String(firstProposal.name);
-  // console.log(`${firstName}`);
-
-
 }
 
 main().catch((error) => {
