@@ -21,7 +21,13 @@ async function main() {
       ? ethers.Wallet.fromMnemonic(process.env.MNEMONIC)
       : new ethers.Wallet(process.env.PRIVATE_KEY ?? EXPOSED_KEY);
   console.log(`Using address ${wallet.address}`);
-  const provider = ethers.providers.getDefaultProvider("ropsten");
+
+  //could use the default provider like this:
+  //const provider = ethers.providers.getDefaultProvider("goerli");
+
+  // or specify a JSON RPC provider like this (this is faster):
+  const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_URL);
+
   const signer = wallet.connect(provider);
   const balanceBN = await signer.getBalance();
   const balance = Number(ethers.utils.formatEther(balanceBN));
